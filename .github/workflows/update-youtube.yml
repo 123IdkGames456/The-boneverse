@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-boneverse-playlists
+  cancel-in-progress: false
+
 jobs:
   update-playlists:
     runs-on: ubuntu-latest
@@ -68,5 +72,6 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add videos.json
             git commit -m "Update Boneverse movie and trailer playlists"
+            git pull --rebase origin main
             git push
           fi
