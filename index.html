@@ -31,38 +31,22 @@ footer{border-top:1px solid var(--line);padding:28px clamp(18px,5vw,76px);displa
 <footer><div><div class="footer-brand">THE <span style="color:var(--orange)">BONEVERSE</span></div><div style="margin-top:6px">INDEPENDENT VR FILM STUDIO</div></div><div>BUILT IN THE VIRTUAL WORLD&nbsp; // &nbsp;© <span id="year"></span> THE BONEVERSE</div></footer>
 <div class="modal" id="movieModal" aria-hidden="true"><div class="modal-box"><div class="modal-top"><span>BV // PLAYBACK TERMINAL</span><button class="close" id="closeModal" aria-label="Close">×</button></div><div class="video-wrap" id="videoWrap"></div><div class="modal-info"><div><h3 id="modalTitle"></h3><p id="modalMeta"></p></div><div class="modal-actions"><a class="btn" id="youtubeWatch" href="#" target="_blank" rel="noopener">OPEN ON YOUTUBE ↗</a></div></div></div></div>
 <script>
-// ADD EACH FILM HERE. Its thumbnail is also its poster.
-// Example: { title:"THE TEST", date:"2026-11-11", duration:"08:24", image:"images/the-test.jpg", youtube:"https://www.youtube.com/watch?v=VIDEO_ID" }
-const YOUTUBE_CHANNEL_URL = "";
-const MOVIES = [
-  {
-    title: "UNTITLED FILM 01",
-    date: "",
-    duration: "TBA",
-    image: "images/Skjermbilde 2026-06-08 171253.png",
-    youtube: ""
-  },
-  {
-    title: "UNTITLED FILM 02",
-    date: "",
-    duration: "TBA",
-    image: "images/Untitled38_20260619145221.png",
-    youtube: ""
-  }
-];
-
+const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@The_BoneVerse";
+const VIDEOS_JSON_URL = "./videos.json";
 const grid=document.getElementById("movieGrid");
 const search=document.getElementById("search");
 const duration=document.getElementById("duration");
 const modal=document.getElementById("movieModal");
 const videoWrap=document.getElementById("videoWrap");
+let MOVIES=[];
 let currentMovies=[];
-function minutes(value){const p=value.split(":").map(Number);return p.length===2?p[0]+p[1]/60:p[0]*60+p[1]+p[2]/60}
-function matchesDuration(movie){const m=minutes(movie.duration||"0:00");if(duration.value==="short")return m<5;if(duration.value==="medium")return m>=5&&m<=15;if(duration.value==="long")return m>15;return true}
-function render(){const term=search.value.trim().toLowerCase();currentMovies=MOVIES.filter(m=>(m.title||"").toLowerCase().includes(term)&&matchesDuration(m)).sort((a,b)=>new Date(b.date)-new Date(a.date));grid.innerHTML="";if(!currentMovies.length){grid.innerHTML='<div class="empty"><strong>NO FILMS IN THE ARCHIVE</strong><p>THE VAULT IS WAITING FOR ITS FIRST RELEASE.<br>ADD YOUR MOVIE DETAILS IN THE MOVIES LIST IN index.html.</p></div>';return}currentMovies.forEach((m,i)=>{const card=document.createElement("article");card.className="movie-card";card.style.animationDelay=(i*.06)+"s";const date=m.date?new Date(m.date+"T00:00:00").toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"}):"RELEASE DATE TBA";card.innerHTML='<div class="poster"><div class="poster-placeholder">BV</div>'+(m.image?'<img loading="lazy" src="'+m.image.replace(/"/g,"&quot;")+'" alt="'+(m.title||"Movie poster").replace(/"/g,"&quot;")+' poster" onerror="this.style.display=\'none\'">':'')+'<div class="play-icon">▶</div></div><div class="card-info"><div class="card-meta"><span>'+date+'</span><span>'+(m.duration||"—")+'</span></div><div class="card-title"></div></div>';card.querySelector(".card-title").textContent=m.title||"Untitled film";card.addEventListener("click",()=>openMovie(m));grid.appendChild(card)})}
-function videoId(url){try{const u=new URL(url);if(u.hostname.includes("youtu.be"))return u.pathname.slice(1);if(u.searchParams.get("v"))return u.searchParams.get("v");const match=u.pathname.match(/\/embed\/([^/?]+)/);return match?match[1]:""}catch{return""}}
-function openMovie(m){document.getElementById("modalTitle").textContent=m.title||"Untitled film";document.getElementById("modalMeta").textContent=(m.date||"Release date TBA")+"  //  "+(m.duration||"Duration TBA");const id=videoId(m.youtube||"");videoWrap.innerHTML=id?'<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?autoplay=1&rel=0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>':'<div style="height:100%;display:grid;place-items:center;color:#92988b;font:11px var(--mono)">VIDEO LINK NOT ADDED YET</div>';const link=document.getElementById("youtubeWatch");link.href=m.youtube||"#";link.style.display=m.youtube?"inline-block":"none";modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
+function seconds(value){if(typeof value==="number")return value;if(!value)return 0;return String(value).split(":").map(Number).reduce((a,n)=>a*60+n,0)}
+function formatDuration(value){const s=Math.max(0,Math.floor(Number(value)||0));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return h?[h,m,r].map(n=>String(n).padStart(2,"0")).join(":"):[m,r].map(n=>String(n).padStart(2,"0")).join(":")}
+function matchesDuration(movie){const m=seconds(movie.durationSeconds);if(duration.value==="short")return m<300;if(duration.value==="medium")return m>=300&&m<=900;if(duration.value==="long")return m>900;return true}
+function render(){const term=search.value.trim().toLowerCase();currentMovies=MOVIES.filter(m=>(m.title||"").toLowerCase().includes(term)&&matchesDuration(m));grid.innerHTML="";if(!currentMovies.length){grid.innerHTML='<div class="empty"><strong>NO FILMS FOUND</strong><p>CHECK BACK LATER — NEW UPLOADS ARE AUTOMATICALLY ADDED TO THE VAULT.</p></div>';return}currentMovies.forEach((m,i)=>{const card=document.createElement("article");card.className="movie-card";card.style.animationDelay=(i*.035)+"s";const date=m.date?new Date(m.date+"T00:00:00").toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"}):"DATE UNAVAILABLE";const poster=m.thumbnail||"";card.innerHTML='<div class="poster"><div class="poster-placeholder">BV</div>'+(poster?'<img loading="lazy" src="'+poster.replace(/"/g,"&quot;")+'" alt="YouTube thumbnail" onerror="this.style.display=\'none\'">':'')+'<div class="play-icon">▶</div></div><div class="card-info"><div class="card-meta"><span>'+date+'</span><span>'+formatDuration(m.durationSeconds)+'</span></div><div class="card-title"></div></div>';card.querySelector(".card-title").textContent=m.title||"Untitled video";card.addEventListener("click",()=>openMovie(m));grid.appendChild(card)})}
+function openMovie(m){const url="https://www.youtube.com/watch?v="+encodeURIComponent(m.id);document.getElementById("modalTitle").textContent=m.title||"Untitled video";document.getElementById("modalMeta").textContent=(m.date||"Release date unavailable")+"  //  "+formatDuration(m.durationSeconds);videoWrap.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(m.id)+'?autoplay=1&rel=0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';const link=document.getElementById("youtubeWatch");link.href=url;link.style.display="inline-block";modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
 function closeMovie(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");videoWrap.innerHTML="";document.body.style.overflow=""}
-search.addEventListener("input",render);duration.addEventListener("change",render);document.getElementById("closeModal").addEventListener("click",closeMovie);modal.addEventListener("click",e=>{if(e.target===modal)closeMovie()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMovie()});document.getElementById("channelLink").href=YOUTUBE_CHANNEL_URL||"#";document.getElementById("channelLink").addEventListener("click",e=>{if(!YOUTUBE_CHANNEL_URL){e.preventDefault();alert("Add your YouTube channel URL in index.html first.")}});document.getElementById("year").textContent=new Date().getFullYear();render();window.addEventListener("load",()=>setTimeout(()=>document.getElementById("loading").classList.add("done"),500));
+async function loadVideos(){try{const response=await fetch(VIDEOS_JSON_URL+"?v="+Date.now(),{cache:"no-store"});if(!response.ok)throw new Error("Video list unavailable");const data=await response.json();MOVIES=Array.isArray(data)?data:[];render()}catch(error){grid.innerHTML='<div class="empty"><strong>ARCHIVE CONNECTION UNAVAILABLE</strong><p>THE VIDEO LIST COULD NOT BE LOADED. PLEASE TRY AGAIN LATER.</p></div>'}}
+search.addEventListener("input",render);duration.addEventListener("change",render);document.getElementById("closeModal").addEventListener("click",closeMovie);modal.addEventListener("click",e=>{if(e.target===modal)closeMovie()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMovie()});document.getElementById("channelLink").href=YOUTUBE_CHANNEL_URL;document.getElementById("year").textContent=new Date().getFullYear();loadVideos();window.addEventListener("load",()=>setTimeout(()=>document.getElementById("loading").classList.add("done"),700));
 </script>
 </body></html>
