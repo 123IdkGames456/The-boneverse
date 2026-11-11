@@ -1,37 +1,4 @@
-[
-  {
-    "id": "MsqaRze8n5A",
-    "title": "Midnight Protocol - a bonelab FNAF movie",
-    "date": "",
-    "durationSeconds": 2332,
-    "thumbnail": "https://i.ytimg.com/vi/MsqaRze8n5A/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD3cnC7D9aJG9YM91aEpRffhE3Ktg"
-  },
-  {
-    "id": "LoyyZrwHjGk",
-    "title": "Braking point E1-The bank",
-    "date": "",
-    "durationSeconds": 1613,
-    "thumbnail": "https://i.ytimg.com/vi/LoyyZrwHjGk/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAQDL91B-82a3Hlh4C5OwoN0CgxBA"
-  },
-  {
-    "id": "KOUVBXyTobw",
-    "title": "SACKMAN TRAILER  -a boneverse movie-",
-    "date": "",
-    "durationSeconds": 66,
-    "thumbnail": "https://i.ytimg.com/vi/KOUVBXyTobw/hq720.jpg?sqp=-oaymwE2CNAFEJQDSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARhyIEsoKTAP&rs=AOn4CLAPBqVmorgoMezPxBoiccFwYpP6xg"
-  },
-  {
-    "id": "dsQ_bfT7Qe4",
-    "title": "Sackman - a bonelab horror short film",
-    "date": "",
-    "durationSeconds": 905,
-    "thumbnail": "https://i.ytimg.com/vi/dsQ_bfT7Qe4/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBxWlUJ6TP1MtgCGQGfkc4Kwgxi1A"
-  },
-  {
-    "id": "ArSa5DzC9k0",
-    "title": "The dog -a bonelab Horror movie",
-    "date": "",
-    "durationSeconds": 5353,
-    "thumbnail": "https://i.ytimg.com/vi/ArSa5DzC9k0/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDB8-bKsfKpsJ25Bl0uBYUoI14UkQ"
-  }
-]
+{
+  "movies": [],
+  "trailers": []
+}
