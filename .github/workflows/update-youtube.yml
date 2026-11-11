@@ -62,7 +62,7 @@ jobs:
           }
           with open("videos.json", "w", encoding="utf-8") as f:
               json.dump(data, f, ensure_ascii=False, indent=2)
-              f.write("\\n")
+              f.write("\n")
           print(f"Saved {len(data['movies'])} movies and {len(data['trailers'])} trailers")
           PY
       - name: Commit updated playlist archive
