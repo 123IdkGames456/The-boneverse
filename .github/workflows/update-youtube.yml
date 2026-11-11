@@ -38,9 +38,11 @@ jobs:
               with open(path, encoding="utf-8") as f:
                   source = json.load(f)
               result = []
+              seen = set()
               for item in source.get("entries") or []:
-                  if not item or not item.get("id"):
+                  if not item or not item.get("id") or item["id"] in seen:
                       continue
+                  seen.add(item["id"])
                   thumbs = item.get("thumbnails") or []
                   thumb = item.get("thumbnail") or (thumbs[-1].get("url") if thumbs else "")
                   uploaded = item.get("upload_date") or ""
