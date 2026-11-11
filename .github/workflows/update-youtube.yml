@@ -1,0 +1,66 @@
+name: Update YouTube film archive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    paths:
+      - ".github/workflows/update-youtube.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update-videos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install yt-dlp
+        run: python -m pip install --upgrade yt-dlp
+      - name: Fetch all channel videos
+        run: |
+          yt-dlp --flat-playlist --dump-single-json --ignore-errors --no-warnings "https://www.youtube.com/@The_BoneVerse/videos" > channel.json
+          python - <<'PY'
+          import json
+
+          with open("channel.json", encoding="utf-8") as f:
+              channel = json.load(f)
+
+          videos = []
+          for item in channel.get("entries") or []:
+              if not item or not item.get("id"):
+                  continue
+              thumbnails = item.get("thumbnails") or []
+              thumbnail = item.get("thumbnail") or (thumbnails[-1].get("url") if thumbnails else "")
+              uploaded = item.get("upload_date") or ""
+              date = f"{uploaded[:4]}-{uploaded[4:6]}-{uploaded[6:8]}" if len(uploaded) == 8 else ""
+              videos.append({
+                  "id": item["id"],
+                  "title": item.get("title") or "Untitled video",
+                  "date": date,
+                  "durationSeconds": item.get("duration") or 0,
+                  "thumbnail": thumbnail or f"https://i.ytimg.com/vi/{item['id']}/hqdefault.jpg"
+              })
+
+          with open("videos.json", "w", encoding="utf-8") as f:
+              json.dump(videos, f, ensure_ascii=False, indent=2)
+              f.write("\n")
+          print(f"Saved {len(videos)} videos")
+          PY
+      - name: Commit updated archive
+        run: |
+          if git diff --quiet -- videos.json; then
+            echo "No changes to the video archive."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add videos.json
+            git commit -m "Update YouTube film archive"
+            git push
+          fi
