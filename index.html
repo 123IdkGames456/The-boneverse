@@ -60,7 +60,8 @@ footer{border-top:1px solid var(--line);padding:28px clamp(18px,5vw,76px);displa
 <div class="modal" id="movieModal" aria-hidden="true"><div class="modal-box"><div class="modal-top"><span>THE BONEVERSE · FILM PLAYER</span><button class="close" id="closeModal" aria-label="Close player">×</button></div><div class="video-wrap" id="videoWrap"></div><div class="modal-info"><div><h3 id="modalTitle"></h3><p id="modalMeta"></p></div><a class="button" id="youtubeWatch" href="#" target="_blank" rel="noopener">Watch on YouTube ↗</a></div></div></div>
 <script>
 const YOUTUBE_CHANNEL_URL="https://www.youtube.com/@The_BoneVerse";
-const VIDEOS_JSON_URL="./videos.json";\nconst PUBLIC_VIDEO_IDS=new Set(["MsqaRze8n5A","dsQ_bfT7Qe4","ArSa5DzC9k0","KOUVBXyTobw"]);
+const VIDEOS_JSON_URL="./videos.json";
+const PUBLIC_VIDEO_IDS=new Set(["MsqaRze8n5A","dsQ_bfT7Qe4","ArSa5DzC9k0","KOUVBXyTobw"]);
 const grid=document.getElementById("movieGrid"),search=document.getElementById("search"),duration=document.getElementById("duration"),modal=document.getElementById("movieModal"),videoWrap=document.getElementById("videoWrap"),moviesTab=document.getElementById("moviesTab"),trailersTab=document.getElementById("trailersTab");
 let COLLECTIONS={movies:[],trailers:[]},activeCollection="movies",currentMovies=[];
 function formatDuration(value){const s=Math.max(0,Math.floor(Number(value)||0)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return h?[h,m,r].map(n=>String(n).padStart(2,"0")).join(":"):[m,r].map(n=>String(n).padStart(2,"0")).join(":")}
